@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System - Manage Users</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: url('https://www.pixelstalk.net/wp-content/uploads/images1/HD-books-wallpaper-backgrounds.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .manage-container {
+            background: rgba(255, 255, 255, 0.5); /* Reduced opacity */
+            backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 90%;
+            max-width: 1100px;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        h2 {
+            color: #1E3A8A;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .add-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .add-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-5px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1E3A8A;
+            color: white;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .remove-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .remove-btn:hover {
+            background-color: #e53935;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="manage-container">
+        <h2>Manage Users</h2>
+        
+        <a href="{% url 'addu' %}">
+            <button class="add-btn">Add New User</button>
+        </a>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>ID Number</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Books Borrowed</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Example row, dynamically generate rows here using server-side scripting -->
+                {% for faculty in faculty_list %}
+                <tr>
+                    <td>{{ faculty.name }}</td>
+                    <td>{{ faculty.id_number }}</td>
+                    <td>{{ faculty.username }}</td>
+                    
+                    <td>{{ faculty.email }}</td>
+                    <td>
+                        {% for book_issue in faculty.issued_books.all %}
+                            {{ book_issue.book.title }}<br>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <a href="{% url 'delu' faculty.id %}" class="delete-btn">
+                            {% csrf_token %}
+                            <button class="remove-btn">Remove</button>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <!-- Repeat similar rows for each user entry -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.querySelectorAll('.remove-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                row.remove();
+
+                // Send request to backend to remove the user from the database
+                // Example: removeUser(userId);
+            });
+        });
+    </script>
+</body>
+</html>
