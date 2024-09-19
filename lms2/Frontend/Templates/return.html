@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System - Return Books</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: url('https://www.pixelstalk.net/wp-content/uploads/images1/HD-books-wallpaper-backgrounds.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .return-container {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 90%;
+            max-width: 1100px;
+            overflow-y: auto;
+            max-height: 90vh;
+            padding-bottom: 50px; /* added padding for better spacing */
+        }
+
+        h2 {
+            color: #1E3A8A;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .faculty-info {
+            margin-bottom: 20px;
+            font-size: 20px;
+            color: #1E3A8A;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1E3A8A;
+            color: white;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        .return-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .return-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        /* Scrollbar customization */
+        .return-container::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .return-container::-webkit-scrollbar-thumb {
+            background-color: #1E3A8A;
+            border-radius: 5px;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #1E3A8A;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background-color: #163d7e;
+            transform: translateY(-2px);
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- Back button fixed at top-left corner -->
+    <a href="{% url 'fpage' %}" class="back-btn"> &lt; Back </a>
+    <div class="return-container">
+        <h2>Return Books</h2>
+        <div class="faculty-info">
+            <p>Name: {{ faculty_name }}</p>
+            <p>ID Number: {{ faculty_id }}</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Book Name</th>
+                    <th>Author</th>
+                    <th>Issued Date</th>
+                    <th>Due Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for issued in issued_books %}
+                <tr>
+                    <td>{{ issued.book.book_name }}</td>
+                    <td>{{ issued.book.author }}</td>
+                    <td>{{ issued.issue_date }}</td>
+                    <td>{{ issued.due_date }}</td>
+                    <td>
+                        <form class="return-form" action="{% url 'return_book' issued.book.book_id %}" method="POST">
+                            {% csrf_token %}
+                            <button class="return-btn" type="submit">Return</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Add confirmation popup for return button
+            $('.return-form').on('submit', function(e) {
+                var confirmed = confirm('Are you sure you want to return this book?');
+                if (!confirmed) {
+                    e.preventDefault();  // Prevent form submission if not confirmed
+                }
+            });
+        });
+    </script>
+</body>
+</html>
